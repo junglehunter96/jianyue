@@ -3,7 +3,6 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store/index";
 import "./assets/styles/global.scss";
-import "./assets/fonts/daysOne.css";
 
 Vue.prototype.$src = process.env.VUE_APP_SRC;
 Vue.config.productionTip = false;

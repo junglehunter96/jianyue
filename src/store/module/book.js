@@ -1,16 +1,16 @@
 const book = {
   state: {
-    INDEX: 1
+    fileName: ""
   },
   mutations: {
-    "SET_INDEX": (state,newValue)=>{
-      state.INDEX = newValue
-    } 
+    SET_FILE_NAME: (state, fileName) => {
+      state.fileName = fileName;
+    }
   },
   actions: {
-    "setIndex": ({commit,state}, newValue)=>{
-      return commit('SET_INDEX',newValue)
+    setFileName: ({ commit }, fileName) => {
+      return commit("SET_FILE_NAME", fileName);
     }
   }
 };
-export default book
+export default book;

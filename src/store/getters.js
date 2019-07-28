@@ -1,5 +1,5 @@
 const book = {
-  book: state => state.book.INDEX
+  fileName: state => state.book.fileName
 }
 
 export default book
