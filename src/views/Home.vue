@@ -3,25 +3,27 @@
     <div id="read">
     </div>
   </div>
-</template>
+</template> 
 
 <script>
 // @ is an alias to /src
 import Epub from "epubjs";
+import { mapGetters } from 'vuex';
 export default {
   name: "home",
+  computed: {
+    ...mapGetters(['book'])
+  },
   methods: {
-    showEbook() {
-      const DOWNLOAD_URL = '/2014_Book_Self-ReportedPopulationHealthA.epub';
-      this.book = new Epub(DOWNLOAD_URL);
-      this.book.renderTo('read',{
-        width:Window.innerWidth,
-        height:Window.innerHeight
-      }).display()
+    showEbook () {
     }
   },
-  mounted() {
-    this.showEbook()
+  mounted () {
+    this.showEbook();
+    console.log(this.book)
   }
 };
 </script>
+<style lang="scss" scoped>
+</style>
+

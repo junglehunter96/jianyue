@@ -25,18 +25,5 @@ module.exports = {
       .set("@router", resolve("src/router"))
       .set("@store", resolve("src/store"))
       .set("@public", resolve("src/public"));
-  },
-  css: {
-    modules: false,
-    extract: IS_PROD,
-    sourceMap: false,
-    loaderOptions: {
-      sass: {
-        // 向全局sass样式传入共享的全局变量
-        data: `@import "~assets/styles/global.scss";$src: "${
-          process.env.VUE_APP_SRC
-        }";`
-      }
-    }
   }
 };
