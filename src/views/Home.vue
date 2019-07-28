@@ -1,18 +1,27 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <div id="read">
+    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
+import Epub from "epubjs";
 export default {
   name: "home",
-  components: {
-    HelloWorld
+  methods: {
+    showEbook() {
+      const DOWNLOAD_URL = '/2014_Book_Self-ReportedPopulationHealthA.epub';
+      this.book = new Epub(DOWNLOAD_URL);
+      this.book.renderTo('read',{
+        width:Window.innerWidth,
+        height:Window.innerHeight
+      }).display()
+    }
+  },
+  mounted() {
+    this.showEbook()
   }
 };
 </script>

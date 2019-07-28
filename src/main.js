@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
+Vue.prototype.$src = process.env.VUE_APP_SRC;
 Vue.config.productionTip = false;
 
 new Vue({
