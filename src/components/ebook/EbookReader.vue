@@ -7,13 +7,13 @@
 <script>
 import Epub from 'epubjs';
 global.ePub = Epub;
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex';
 export default {
   methods: {
-    ...mapGetters(['fileName']),
-    ...mapActions(['setFileName']),
+    ...mapGetters(['fileName', 'menuVisible']),
+    ...mapActions(['setFileName', 'setMenuVisible']),
     prevPage () {
-      if (this.rendition) {     
+      if (this.rendition) {
         this.rendition.prev()
       }
     },
@@ -22,11 +22,12 @@ export default {
         this.rendition.next()
       }
     },
-    toggleTitleSAndMenu () {
-
+    toggleTitleAndMenu () {
+      this.setMenuVisible(!this.menuVisible())
     },
     init_epub () {
       let url = `http://192.168.2.76:8081/epub/${this.fileName()}.epub`;
+      console.log(this.fileName())
       this.book = new Epub(url);
       this.rendition = this.book.renderTo('reader', {
         width: innerWidth,
@@ -46,7 +47,7 @@ export default {
         } else if (time > 500 && offsetX < -40) {
           this.nextPage()
         } else {
-          this.toggleTitleSAndMenu()
+          this.toggleTitleAndMenu()
         }
         event.stopPropagation();
         event.preventDefault();
@@ -54,10 +55,12 @@ export default {
     }
   },
   mounted () {
-    let fileName = this.$route.params.fileName.split('|').join('/');
-    this.setFileName(fileName).then(() => {
-      this.init_epub()
-    })
+    
+      let fileName = this.$route.params.fileName.split('|').join('/');
+      this.setFileName(fileName).then(() => {
+        this.init_epub()
+      })
+    
   },
 }
 </script>
