@@ -26,11 +26,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { ebookMixins } from '../../utils/mixins';
 export default {
-  computed: {
-    ...mapGetters(['menuVisible'])
-  },
+  mixins: [ebookMixins],
   methods: {
     back () {
       console.log("back")

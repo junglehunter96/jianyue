@@ -1,16 +1,18 @@
 <template>
   <div>
-    <ebook-title-bar></ebook-title-bar>
+    <ebook-title></ebook-title>
     <ebook-reader></ebook-reader>
+    <ebook-menu></ebook-menu>
   </div>
 </template>
 
 <script>
 import EbookReader from "../../components/ebook/EbookReader"
-import EbookTitleBar from "../../components/ebook/EbookTitleBar"
+import EbookTitle from "../../components/ebook/EbookTitle"
+import EbookMenu from "../../components/ebook/EbookMenu"
   export default {
     components: {
-      EbookReader,EbookTitleBar
+      EbookReader,EbookTitle,EbookMenu
     }
   }
 </script>

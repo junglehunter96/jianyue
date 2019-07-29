@@ -7,27 +7,27 @@
 <script>
 import Epub from 'epubjs';
 global.ePub = Epub;
-import { mapActions, mapGetters } from 'vuex';
+import { ebookMixins } from '../../utils/mixins';
 export default {
+  mixins: [ebookMixins],
   methods: {
-    ...mapGetters(['fileName', 'menuVisible']),
-    ...mapActions(['setFileName', 'setMenuVisible']),
     prevPage () {
       if (this.rendition) {
         this.rendition.prev()
+        this.setMenuVisible(false)
       }
     },
     nextPage () {
       if (this.rendition) {
         this.rendition.next()
+        this.setMenuVisible(false)
       }
     },
     toggleTitleAndMenu () {
-      this.setMenuVisible(!this.menuVisible())
+      this.setMenuVisible(!this.menuVisible)
     },
     init_epub () {
-      let url = `http://192.168.2.76:8081/epub/${this.fileName()}.epub`;
-      console.log(this.fileName())
+      let url = `http://192.168.2.76:8081/epub/${this.fileName}.epub`;
       this.book = new Epub(url);
       this.rendition = this.book.renderTo('reader', {
         width: innerWidth,
@@ -42,9 +42,9 @@ export default {
       this.rendition.on('touchend', event => {
         const offsetX = event.changedTouches[0].clientX - this.touchStartX;
         const time = event.timeStamp - this.touchStartTime;
-        if (time > 500 && offsetX > 40) {
+        if (time > 300 && offsetX > 40) {
           this.prevPage()
-        } else if (time > 500 && offsetX < -40) {
+        } else if (time > 300 && offsetX < -40) {
           this.nextPage()
         } else {
           this.toggleTitleAndMenu()
@@ -55,12 +55,14 @@ export default {
     }
   },
   mounted () {
-    
+    if (this.$route.params.fileName) {
       let fileName = this.$route.params.fileName.split('|').join('/');
       this.setFileName(fileName).then(() => {
         this.init_epub()
       })
-    
+    }
+
+
   },
 }
 </script>
