@@ -25,10 +25,14 @@ export default {
     },
     toggleTitleAndMenu () {
       this.setMenuVisible(!this.menuVisible)
+      if(this.menuVisible) {
+        this.setSettingVisible(-1)
+      }
     },
     init_epub () {
       let url = `http://192.168.2.76:8081/epub/${this.fileName}.epub`;
       this.book = new Epub(url);
+      this.setCurrentBook(this.book);
       this.rendition = this.book.renderTo('reader', {
         width: innerWidth,
         height: innerHeight,

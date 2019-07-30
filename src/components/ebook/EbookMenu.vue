@@ -4,6 +4,7 @@
       <div
         class="menu-wrapper"
         v-show="menuVisible"
+        :class="{'hide-box-shadow':!menuVisible || settingVisible>= 0}"
       >
         <div class="icon-wrapper">
           <span
@@ -31,13 +32,30 @@
         </div>
       </div>
     </transition>
+    <ebook-font-set></ebook-font-set>
+    <ebook-font-family-popup></ebook-font-family-popup>
   </div>
 </template>
 
 <script>
 import { ebookMixins } from '../../utils/mixins';
+import EbookFontSet from "../../components/ebook/EbookFontSet"
+import EbookFontFamilyPopup from "../../components/ebook/EbookFontFamilyPopup"
 export default {
-  mixins: [ebookMixins]
+  mixins: [ebookMixins],
+  components: {
+    EbookFontSet,EbookFontFamilyPopup
+  },
+  methods: {
+    showSetting (key) {
+      if(this.settingVisible === key) {
+        this.setSettingVisible(-1)
+      }else{
+        this.setSettingVisible(key)
+      }   
+    }
+  },
+
 }
 </script>
 
