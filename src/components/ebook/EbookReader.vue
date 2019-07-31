@@ -8,6 +8,7 @@
 import Epub from 'epubjs';
 global.ePub = Epub;
 import { ebookMixins } from '../../utils/mixins';
+
 export default {
   mixins: [ebookMixins],
   methods: {
@@ -25,7 +26,8 @@ export default {
     },
     toggleTitleAndMenu () {
       this.setMenuVisible(!this.menuVisible)
-      if(this.menuVisible) {
+      this.setFontFamilyVisible(false)
+      if (this.menuVisible) {
         this.setSettingVisible(-1)
       }
     },
@@ -38,7 +40,22 @@ export default {
         height: innerHeight,
         method: 'default'
       });
-      this.rendition.display();
+      this.rendition.display().then(() => {
+        let fontSize = this.$storage.getFontSize(this.fileName)
+        if (!fontSize) {
+          this.$storage.saveFontSize(this.fileName, this.defaultFontSize);
+        }else {
+          this.rendition.themes.fontSize(fontSize)
+          this.setDefaultFontSize(fontSize)
+        }
+        let font = this.$storage.getFontFamily(this.fileName)
+        if (!font) {
+          this.$storage.saveFontFamily(this.fileName, this.defaultFontFamily);
+        }else {
+          this.rendition.themes.font(font)
+          this.setDefaultFontFamily(font)
+        }
+      });
       this.rendition.on('touchstart', event => {
         this.touchStartX = event.changedTouches[0].clientX;
         this.touchStartTime = event.timeStamp;
@@ -56,6 +73,17 @@ export default {
         event.stopPropagation();
         event.preventDefault();
       });
+      // 注入epub内嵌样式
+      this.rendition.hooks.content.register(contents => {
+        Promise.all([
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/cabin.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/daysOne.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/montserrat.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/tangerine.css`),
+        ]).then(() => {
+
+        })
+      })
     }
   },
   mounted () {

@@ -4,13 +4,15 @@ import router from "./router";
 import store from "./store/index";
 import "./assets/styles/global.scss";
 import "./assets/styles/icon.css";
+import storage from "./utils/storage.js";
+import i18n from "./lang/index"
 
-
-Vue.prototype.$src = process.env.VUE_APP_SRC;
+Vue.prototype.$storage = storage;
 Vue.config.productionTip = false;
 
 new Vue({
   router,
   store,
+  i18n,
   render: h => h(App)
 }).$mount("#app");

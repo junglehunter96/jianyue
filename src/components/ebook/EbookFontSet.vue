@@ -55,7 +55,8 @@ export default {
   methods: {
     setFontSize (fontSize) {
       this.setDefaultFontSize(fontSize);
-      this.currentBook.rendition.themes.fontSize(fontSize)
+      this.$storage.saveFontSize(fontSize);
+      this.currentBook.rendition.themes.fontSize(fontSize);
     },
     showFontFamilyPopup() {
       this.setFontFamilyVisible(true)
@@ -71,7 +72,7 @@ export default {
   position: absolute;
   display: flex;
   flex-direction: column;
-  bottom: px2rem(48);
+  bottom: px2rem(47);
   left: 0;
   z-index: 101;
   width: 100%;

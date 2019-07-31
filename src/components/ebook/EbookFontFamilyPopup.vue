@@ -11,20 +11,23 @@
         >
           <span class="icon-down2"></span>
         </div>
-        <div class="ebook-popup-title-text">选择字体</div>
+        <div class="ebook-popup-title-text">{{$t('book.selectFont')}}</div>
       </div>
       <div class="ebook-popup-list-wrapper">
         <div
           class="ebook-popup-item"
           v-for="(item,index) of fontFamily"
           :key="index"
-          @click="setFontFamily(item)"
+          @click="setFontFamily(item.font)"
         >
           <div
             class="ebook-popup-item-text"
             :class="{'selected':isSelected(item)}"
           >{{item.font}}</div>
-          <div class="ebook-popup-item-check" v-show="defaultFontFamily === item.font">
+          <div
+            class="ebook-popup-item-check"
+            v-show="defaultFontFamily === item.font"
+          >
             <span class="icon-check"></span>
           </div>
         </div>
@@ -35,7 +38,8 @@
 
 <script>
 import { ebookMixins } from '../../utils/mixins';
-import { fontFamily } from '../../utils/book'
+import { fontFamily } from '../../utils/book';
+import { setLocalStorage, getLocalStorage, clearLocalStorage } from '../../utils/storage'
 export default {
   mixins: [ebookMixins],
   data () {
@@ -50,11 +54,17 @@ export default {
     isSelected (item) {
       return this.defaultFontFamily === item.font
     },
-    setFontFamily(item) {
-      this.setDefaultFontFamily(item.font);
-      
+    setFontFamily (font) {
+      this.setDefaultFontFamily(font);
+      this.$storage.saveFontFamily(this.fileName,font);
+      if (font === 'Default') {
+        this.currentBook.rendition.themes.font('Times New Roman');
+      } else {
+        this.currentBook.rendition.themes.font(font);
+      }
     }
   },
+  mounted () {},
 }
 </script>
 
@@ -93,13 +103,13 @@ export default {
   }
   .ebook-popup-list-wrapper {
     .ebook-popup-item {
-      display:flex;
+      display: flex;
       padding: px2rem(16);
       height: px2rem(47);
       box-sizing: border-box;
       border-bottom: 1px solid #f1f1f1;
       .ebook-popup-item-text {
-        flex:1;
+        flex: 1;
         font-size: px2rem(14);
         text-align: left;
         &.selected {
@@ -107,8 +117,8 @@ export default {
         }
       }
       .ebook-popup-item-check {
-        flex:1;
-        text-align:right;
+        flex: 1;
+        text-align: right;
         font-size: px2rem(14);
         font-weight: bold;
       }
