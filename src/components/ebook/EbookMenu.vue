@@ -32,27 +32,29 @@
         </div>
       </div>
     </transition>
-    <ebook-font-set></ebook-font-set>
+    <ebook-setting-themes></ebook-setting-themes>
+    <ebook-setting-font></ebook-setting-font>
     <ebook-font-family-popup></ebook-font-family-popup>
   </div>
 </template>
 
 <script>
 import { ebookMixins } from '../../utils/mixins';
-import EbookFontSet from "../../components/ebook/EbookFontSet"
+import EbookSettingFont from "../../components/ebook/EbookSettingFont"
 import EbookFontFamilyPopup from "../../components/ebook/EbookFontFamilyPopup"
+import EbookSettingThemes from "../../components/ebook/EbookSettingThemes"
 export default {
   mixins: [ebookMixins],
   components: {
-    EbookFontSet,EbookFontFamilyPopup
+    EbookSettingFont, EbookFontFamilyPopup,EbookSettingThemes
   },
   methods: {
     showSetting (key) {
-      if(this.settingVisible === key) {
+      if (this.settingVisible === key) {
         this.setSettingVisible(-1)
-      }else{
+      } else {
         this.setSettingVisible(key)
-      }   
+      }
     }
   },
 

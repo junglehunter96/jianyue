@@ -12,18 +12,21 @@ import { ebookMixins } from '../../utils/mixins';
 export default {
   mixins: [ebookMixins],
   methods: {
+    // 上一页
     prevPage () {
       if (this.rendition) {
         this.rendition.prev()
         this.setMenuVisible(false)
       }
     },
+    // 下一页
     nextPage () {
       if (this.rendition) {
         this.rendition.next()
         this.setMenuVisible(false)
       }
     },
+    // 点击触发标题栏和菜单栏
     toggleTitleAndMenu () {
       this.setMenuVisible(!this.menuVisible)
       this.setFontFamilyVisible(false)
@@ -31,8 +34,42 @@ export default {
         this.setSettingVisible(-1)
       }
     },
+    // 初始化字号
+    init_fontSize () {
+      let fontSize = this.$storage.getFontSize(this.fileName)
+      if (!fontSize) {
+        this.$storage.saveFontSize(this.fileName, this.defaultFontSize);
+      } else {
+        this.rendition.themes.fontSize(fontSize)
+        this.setDefaultFontSize(fontSize)
+      }
+    },
+    // 初始化字体
+    init_fontFamily () {
+      let font = this.$storage.getFontFamily(this.fileName)
+      if (!font) {
+        this.$storage.saveFontFamily(this.fileName, this.defaultFontFamily);
+      } else {
+        this.rendition.themes.font(font)
+        this.setDefaultFontFamily(font)
+      }
+    },
+    // 初始化电子书主题
+    init_epubTheme() {
+      let defaultTheme = this.$storage.getTheme(this.fileName)
+      if(!defaultTheme) {
+        defaultTheme = this.themeList[0].name;
+        this.setDefaultTheme(defaultTheme)
+        this.$storage.saveTheme(this.fileName,defaultTheme)
+      }
+      this.themeList.forEach( theme => {
+        this.rendition.themes.register(theme.name,theme.style);
+        this.rendition.themes.select(defaultTheme)
+      })
+    },
+    // 初始化电子书
     init_epub () {
-      let url = `http://192.168.2.76:8081/epub/${this.fileName}.epub`;
+      let url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`;
       this.book = new Epub(url);
       this.setCurrentBook(this.book);
       this.rendition = this.book.renderTo('reader', {
@@ -41,20 +78,9 @@ export default {
         method: 'default'
       });
       this.rendition.display().then(() => {
-        let fontSize = this.$storage.getFontSize(this.fileName)
-        if (!fontSize) {
-          this.$storage.saveFontSize(this.fileName, this.defaultFontSize);
-        }else {
-          this.rendition.themes.fontSize(fontSize)
-          this.setDefaultFontSize(fontSize)
-        }
-        let font = this.$storage.getFontFamily(this.fileName)
-        if (!font) {
-          this.$storage.saveFontFamily(this.fileName, this.defaultFontFamily);
-        }else {
-          this.rendition.themes.font(font)
-          this.setDefaultFontFamily(font)
-        }
+        this.init_fontSize();
+        this.init_fontFamily();
+        this.init_epubTheme();
       });
       this.rendition.on('touchstart', event => {
         this.touchStartX = event.changedTouches[0].clientX;

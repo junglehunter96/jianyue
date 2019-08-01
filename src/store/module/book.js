@@ -8,7 +8,7 @@ const book = {
     defaultFontSize: 16,
     defaultFontFamily: 'Default',
     fontFamilyVisible: false,
-    defaultTheme: 'default',
+    defaultTheme: 'Default',
     bookAvailable: false,
     progress: 0,
     section: 0,

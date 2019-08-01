@@ -1,5 +1,5 @@
 import { mapGetters, mapActions } from "vuex";
-
+import { themeList } from './book'
 const ebookMixins = {
   computed: {
     ...mapGetters([
@@ -22,7 +22,10 @@ const ebookMixins = {
       "pagelist",
       "offsetY",
       "isBookmark"
-    ])
+    ]),
+    themeList () {
+      return themeList(this)
+    }
   },
   methods: {
     ...mapActions([
