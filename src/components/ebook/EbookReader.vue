@@ -7,6 +7,7 @@
 <script>
 import Epub from 'epubjs';
 global.ePub = Epub;
+import { addCss } from '../../utils/utils'
 import { ebookMixins } from '../../utils/mixins';
 
 export default {
@@ -55,15 +56,15 @@ export default {
       }
     },
     // 初始化电子书主题
-    init_epubTheme() {
+    init_epubTheme () {
       let defaultTheme = this.$storage.getTheme(this.fileName)
-      if(!defaultTheme) {
+      if (!defaultTheme) {
         defaultTheme = this.themeList[0].name;
-        this.setDefaultTheme(defaultTheme)
-        this.$storage.saveTheme(this.fileName,defaultTheme)
+        this.$storage.saveTheme(this.fileName, defaultTheme)
       }
-      this.themeList.forEach( theme => {
-        this.rendition.themes.register(theme.name,theme.style);
+      this.setDefaultTheme(defaultTheme)
+      this.themeList.forEach(theme => {
+        this.rendition.themes.register(theme.name, theme.style);
         this.rendition.themes.select(defaultTheme)
       })
     },
@@ -81,6 +82,7 @@ export default {
         this.init_fontSize();
         this.init_fontFamily();
         this.init_epubTheme();
+        this.init_GlobalStyle();
       });
       this.rendition.on('touchstart', event => {
         this.touchStartX = event.changedTouches[0].clientX;
@@ -106,9 +108,7 @@ export default {
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/daysOne.css`),
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/montserrat.css`),
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/tangerine.css`),
-        ]).then(() => {
-
-        })
+        ]).then(() => { })
       })
     }
   },

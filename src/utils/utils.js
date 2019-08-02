@@ -26,10 +26,10 @@ export function removeCss(href) {
 }
 
 export function removeAllCss() {
-  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
-  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
-  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_gold.css`)
-  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/book/res/theme/theme_default.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/book/res/theme/theme_eye.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/book/res/theme/theme_gold.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/book/res/theme/theme_night.css`)
 }
 
 export function os() {
