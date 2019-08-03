@@ -68,22 +68,8 @@ export default {
         this.rendition.themes.select(defaultTheme)
       })
     },
-    // 初始化电子书
-    init_epub () {
-      let url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`;
-      this.book = new Epub(url);
-      this.setCurrentBook(this.book);
-      this.rendition = this.book.renderTo('reader', {
-        width: innerWidth,
-        height: innerHeight,
-        method: 'default'
-      });
-      this.rendition.display().then(() => {
-        this.init_fontSize();
-        this.init_fontFamily();
-        this.init_epubTheme();
-        this.init_GlobalStyle();
-      });
+    // 监听电子书翻页手势
+    init_Gesture () {
       this.rendition.on('touchstart', event => {
         this.touchStartX = event.changedTouches[0].clientX;
         this.touchStartTime = event.timeStamp;
@@ -101,6 +87,21 @@ export default {
         event.stopPropagation();
         event.preventDefault();
       });
+    },
+    //初始化电子书渲染
+    init_rendition () {
+      this.rendition = this.book.renderTo('reader', {
+        width: innerWidth,
+        height: innerHeight,
+        method: 'default'
+      });
+      this.rendition.display().then(() => {
+        this.init_fontSize();
+        this.init_fontFamily();
+        this.init_epubTheme();
+        this.init_GlobalStyle();
+        this.init_Gesture();
+      });
       // 注入epub内嵌样式
       this.rendition.hooks.content.register(contents => {
         Promise.all([
@@ -110,17 +111,28 @@ export default {
           contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/tangerine.css`),
         ]).then(() => { })
       })
-    }
+    },
+    // 初始化电子书
+    init_epub () {
+      let url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`;
+      this.book = new Epub(url);
+      this.setCurrentBook(this.book);
+      this.init_rendition();
+      this.book.ready.then(() => {
+        return this.book.locations.generate(750 * (window.innerWidth / 375) * (this.$storage.getFontSize(this.fileName) / 16))
+      }).then(locations => {
+        this.book.rendition.display(locations)
+        this.setBookAvailable(true)
+      })
+    },
   },
   mounted () {
     if (this.$route.params.fileName) {
       let fileName = this.$route.params.fileName.split('|').join('/');
       this.setFileName(fileName).then(() => {
-        this.init_epub()
+        this.init_epub();
       })
     }
-
-
   },
 }
 </script>

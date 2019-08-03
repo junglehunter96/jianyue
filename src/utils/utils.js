@@ -1,3 +1,5 @@
+//通用方法
+
 export function px2rem(px) {
   const ratio = 375 / 10
   return px / ratio
@@ -8,6 +10,7 @@ export function realPx(px) {
   return px * (maxWidth / 375)
 }
 
+// 添加样式表
 export function addCss(href) {
   const link = document.createElement('link')
   link.setAttribute('rel', 'stylesheet')
@@ -16,6 +19,7 @@ export function addCss(href) {
   document.getElementsByTagName('head')[0].appendChild(link)
 }
 
+// 移除样式表
 export function removeCss(href) {
   const link = document.getElementsByTagName('link')
   for (var i = link.length; i >= 0; i--) {
@@ -25,6 +29,7 @@ export function removeCss(href) {
   }
 }
 
+// 移除所有样式
 export function removeAllCss() {
   removeCss(`${process.env.VUE_APP_RES_URL}/book/res/theme/theme_default.css`)
   removeCss(`${process.env.VUE_APP_RES_URL}/book/res/theme/theme_eye.css`)
@@ -32,6 +37,7 @@ export function removeAllCss() {
   removeCss(`${process.env.VUE_APP_RES_URL}/book/res/theme/theme_night.css`)
 }
 
+// 型号识别
 export function os() {
   const ua = navigator.userAgent
   const isWindowsPhone = /(?:Windows Phone)/.test(ua)

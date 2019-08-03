@@ -32,9 +32,14 @@
         </div>
       </div>
     </transition>
+    <!-- 主题设置 -->
     <ebook-setting-themes></ebook-setting-themes>
+    <!-- 字体大小设置 -->
     <ebook-setting-font></ebook-setting-font>
+    <!-- 字体样式设置 -->
     <ebook-font-family-popup></ebook-font-family-popup>
+    <!-- 进度设置 -->
+    <ebook-setting-progress></ebook-setting-progress>
   </div>
 </template>
 
@@ -43,10 +48,11 @@ import { ebookMixins } from '../../utils/mixins';
 import EbookSettingFont from "../../components/ebook/EbookSettingFont"
 import EbookFontFamilyPopup from "../../components/ebook/EbookFontFamilyPopup"
 import EbookSettingThemes from "../../components/ebook/EbookSettingThemes"
+import EbookSettingProgress from "../../components/ebook/EbookSettingProgress"
 export default {
   mixins: [ebookMixins],
   components: {
-    EbookSettingFont, EbookFontFamilyPopup,EbookSettingThemes
+    EbookSettingFont, EbookFontFamilyPopup,EbookSettingThemes,EbookSettingProgress
   },
   methods: {
     showSetting (key) {

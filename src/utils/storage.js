@@ -1,3 +1,5 @@
+//封装缓存方法
+
 import Storage from "web-storage-cache";
 
 const localStorage = new Storage();
