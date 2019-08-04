@@ -104,7 +104,6 @@ export default {
           this.refreshLocation();
         })
       }
-
     },
     nextSection () {
       //spine 电子书进度

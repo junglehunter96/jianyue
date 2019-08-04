@@ -40,6 +40,8 @@
     <ebook-font-family-popup></ebook-font-family-popup>
     <!-- 进度设置 -->
     <ebook-setting-progress></ebook-setting-progress>
+    <!-- 弹出菜单 -->
+    <ebook-slide></ebook-slide>
   </div>
 </template>
 
@@ -49,10 +51,15 @@ import EbookSettingFont from "../../components/ebook/EbookSettingFont"
 import EbookFontFamilyPopup from "../../components/ebook/EbookFontFamilyPopup"
 import EbookSettingThemes from "../../components/ebook/EbookSettingThemes"
 import EbookSettingProgress from "../../components/ebook/EbookSettingProgress"
+import EbookSlide from "../../components/ebook/EbookSlide"
 export default {
   mixins: [ebookMixins],
   components: {
-    EbookSettingFont, EbookFontFamilyPopup,EbookSettingThemes,EbookSettingProgress
+    EbookSettingFont, 
+    EbookFontFamilyPopup,
+    EbookSettingThemes,
+    EbookSettingProgress,
+    EbookSlide
   },
   methods: {
     showSetting (key) {

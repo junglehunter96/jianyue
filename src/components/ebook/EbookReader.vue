@@ -31,14 +31,6 @@ export default {
         this.setMenuVisible(false)
       }
     },
-    // 点击触发标题栏和菜单栏
-    toggleTitleAndMenu () {
-      this.setMenuVisible(!this.menuVisible)
-      this.setFontFamilyVisible(false)
-      if (this.menuVisible) {
-        this.setSettingVisible(-1)
-      }
-    },
     // 初始化字号
     init_fontSize () {
       let fontSize = this.$storage.getFontSize(this.fileName)
