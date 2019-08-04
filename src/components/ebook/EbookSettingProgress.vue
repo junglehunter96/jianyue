@@ -6,7 +6,7 @@
     >
       <div class="setting-progress">
         <div class="time-read-wrapper">
-          <span class="read-time-text">222</span>
+          <span class="read-time-text">{{getReadTimeText()}}</span>
           <span class="icon-forward"></span>
         </div>
         <div class="progress-wrapper">
@@ -36,7 +36,8 @@
           </div>
         </div>
         <div class="text-wrapper">
-          <span>{{bookAvailable ? progress + '%' : '加载中...'}}</span>
+          <span class="progress-section-text">{{getSetcionName}}</span>
+          <span>({{bookAvailable ? progress + '%' : '加载中...'}})</span>
         </div>
       </div>
     </div>
@@ -47,10 +48,34 @@
 import { ebookMixins } from '../../utils/mixins';
 export default {
   mixins: [ebookMixins],
+  computed: {
+    getSetcionName () {
+      if (this.section) {
+        const sectionInfo = this.currentBook.section(this.section)
+        if (sectionInfo && sectionInfo.href) {
+          return this.currentBook.navigation.get(sectionInfo.href).label
+        }
+      }
+    }
+  },
   methods: {
+    getReadTimeText () {
+      return this.$t('book.haveRead').replace("$1", this.getReadTimeByMinute())
+
+    },
+    getReadTimeByMinute () {
+      let readTime = this.$storage.getReadTime(this.fileName)
+      if (!readTime) {
+        return 1
+      } else {
+        return Math.ceil(readTime / 60)
+      }
+    },
     displayProgress () {
       const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
-      this.currentBook.rendition.display(cfi)
+      this.currentBook.rendition.display(cfi).then(() => {
+        this.refreshLocation();
+      })
     },
     onProgressChange (progress) {
       this.setProgress(progress).then(() => {
@@ -65,24 +90,18 @@ export default {
       })
     },
     displaySection () {
-      const sectioninfo = this.currentBook.section(this.section)
-      if (sectioninfo && sectioninfo.href) {
-        this.currentBook.rendition.display(sectioninfo.href).then(() => {
-          this.refreshLocation()
+      const sectionInfo = this.currentBook.section(this.section)
+      if (sectionInfo && sectionInfo.href) {
+        this.currentBook.rendition.display(sectionInfo.href).then(() => {
+          this.refreshLocation();
         })
-      }
-    },
-    refreshLocation () {
-      const currentLocation = this.currentBook.rendition.currentLocation();
-      if (currentLocation && currentLocation.start.cfi) {
-        const progress = this.currentBook.locations.percentageFromCfi(currentLocation.start.cfi);
-        this.setProgress(Math.floor(progress * 100))
       }
     },
     prevSection () {
       if (this.section > 0 && this.bookAvailable) {
         this.setSection(this.section - 1).then(() => {
-          this.displaySection()
+          this.displaySection();
+          this.refreshLocation();
         })
       }
 
@@ -91,7 +110,8 @@ export default {
       //spine 电子书进度
       if (this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
         this.setSection(this.section + 1).then(() => {
-          this.displaySection()
+          this.displaySection();
+          this.refreshLocation();
         })
       }
     },
@@ -173,7 +193,12 @@ export default {
       width: 100%;
       color: #333;
       font-size: px2rem(12);
-      text-align: center;
+      @include center;
+      padding: 0 px2rem(50);
+      box-sizing: border-box;
+      .progress-section-text {
+        @include ellipsis;
+      }
     }
   }
 }

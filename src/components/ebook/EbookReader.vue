@@ -16,14 +16,18 @@ export default {
     // 上一页
     prevPage () {
       if (this.rendition) {
-        this.rendition.prev()
+        this.rendition.prev().then(() => {
+          this.refreshLocation();
+        })
         this.setMenuVisible(false)
       }
     },
     // 下一页
     nextPage () {
       if (this.rendition) {
-        this.rendition.next()
+        this.rendition.next().then(() => {
+          this.refreshLocation();
+        })
         this.setMenuVisible(false)
       }
     },
@@ -95,13 +99,14 @@ export default {
         height: innerHeight,
         method: 'default'
       });
-      this.rendition.display().then(() => {
+      const location = this.$storage.getLocation(this.fileName)
+      this.display(location, () => {
         this.init_fontSize();
         this.init_fontFamily();
         this.init_epubTheme();
         this.init_GlobalStyle();
         this.init_Gesture();
-      });
+      })
       // 注入epub内嵌样式
       this.rendition.hooks.content.register(contents => {
         Promise.all([
@@ -123,6 +128,7 @@ export default {
       }).then(locations => {
         this.book.rendition.display(locations)
         this.setBookAvailable(true)
+        this.refreshLocation()
       })
     },
   },

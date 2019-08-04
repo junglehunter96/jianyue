@@ -80,6 +80,27 @@ const ebookMixins = {
           );
           break;
       }
+    },
+    refreshLocation () {
+      const currentLocation = this.currentBook.rendition.currentLocation();
+      const startCfi =  currentLocation.start.cfi;
+        const progress = this.currentBook.locations.percentageFromCfi(startCfi);
+        this.setProgress(Math.floor(progress * 100))
+        this.$storage.saveLocation(this.fileName,startCfi)
+        this.setSection(currentLocation.index)
+    },
+    display(target, cb) {
+      if(target) {
+        this.currentBook.rendition.display(target).then(()=>{
+          this.refreshLocation()
+          if(cb) cb();
+        })
+      }else {
+        this.currentBook.rendition.display().then(()=>{
+          this.refreshLocation()
+          if(cb) cb();
+        })
+      }
     }
   }
 };
