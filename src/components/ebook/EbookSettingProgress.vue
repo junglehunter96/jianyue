@@ -59,23 +59,14 @@ export default {
     }
   },
   methods: {
-    getReadTimeText () {
-      return this.$t('book.haveRead').replace("$1", this.getReadTimeByMinute())
-
-    },
-    getReadTimeByMinute () {
-      let readTime = this.$storage.getReadTime(this.fileName)
-      if (!readTime) {
-        return 1
-      } else {
-        return Math.ceil(readTime / 60)
-      }
-    },
     displayProgress () {
-      const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
-      this.currentBook.rendition.display(cfi).then(() => {
-        this.refreshLocation();
-      })
+      //避免cfi报错
+      if (this.currentBook && this.currentBook.locations && this.currentBook.locations.cfiFromPercentage(this.progress / 100)) {
+        const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
+        this.currentBook.rendition.display(cfi).then(() => {
+          this.refreshLocation();
+        })
+      }
     },
     onProgressChange (progress) {
       this.setProgress(progress).then(() => {

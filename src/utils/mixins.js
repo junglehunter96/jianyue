@@ -83,11 +83,17 @@ const ebookMixins = {
     },
     refreshLocation() {
       const currentLocation = this.currentBook.rendition.currentLocation();
-      const startCfi = currentLocation.start.cfi;
-      const progress = this.currentBook.locations.percentageFromCfi(startCfi);
-      this.setProgress(Math.floor(progress * 100));
-      this.$storage.saveLocation(this.fileName, startCfi);
-      this.setSection(currentLocation.start.index);
+      if (
+        currentLocation &&
+        currentLocation.start &&
+        currentLocation.start.cfi
+      ) {
+        const startCfi = currentLocation.start.cfi;
+        const progress = this.currentBook.locations.percentageFromCfi(startCfi);
+        this.setProgress(Math.floor(progress * 100));
+        this.$storage.saveLocation(this.fileName, startCfi);
+        this.setSection(currentLocation.start.index);
+      }
     },
     display(target, cb) {
       if (target) {
@@ -109,6 +115,19 @@ const ebookMixins = {
       if (this.menuVisible) {
         this.setSettingVisible(-1);
       }
+    },
+    //获取已读分钟
+    getReadTimeByMinute() {
+      let readTime = this.$storage.getReadTime(this.fileName);
+      if (!readTime) {
+        return 1;
+      } else {
+        return Math.ceil(readTime / 60);
+      }
+    },
+    // 获取已读时间
+    getReadTimeText() {
+      return this.$t("book.haveRead").replace("$1", this.getReadTimeByMinute());
     }
   }
 };

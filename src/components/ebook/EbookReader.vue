@@ -7,7 +7,7 @@
 <script>
 import Epub from 'epubjs';
 global.ePub = Epub;
-import { addCss } from '../../utils/utils'
+import { addCss, flatten } from '../../utils/utils'
 import { ebookMixins } from '../../utils/mixins';
 
 export default {
@@ -84,6 +84,23 @@ export default {
         event.preventDefault();
       });
     },
+    parseBook () {
+      this.book.loaded.cover.then(cover => {
+        this.book.archive.createUrl(cover).then(url => {
+          this.setCover(url)
+        })
+      })
+      this.book.loaded.metadata.then(metadata => {
+        this.setMetadata(metadata)
+      })
+      this.book.loaded.navigation.then(nav => {
+        const navItem = flatten(nav.toc)
+        function find (item, level = 0) {
+          return !item.parent ? level : find(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
+        }
+        this.setNavigation(navItem)
+      })
+    },
     //初始化电子书渲染
     init_rendition () {
       this.rendition = this.book.renderTo('reader', {
@@ -98,6 +115,7 @@ export default {
         this.init_epubTheme();
         this.init_GlobalStyle();
         this.init_Gesture();
+        this.parseBook();
       })
       // 注入epub内嵌样式
       this.rendition.hooks.content.register(contents => {
