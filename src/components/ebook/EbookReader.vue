@@ -1,88 +1,199 @@
 <template>
-  <div>
-    <div id="reader"></div>
+  <div class="ebook-reader">
+    <div id="read"></div>
+    <div
+      class="ebook-reader-mask"
+      @click="onMaskClick"
+      @touchmove="move"
+      @touchend="moveEnd"
+      @mousedown.left="onMouseEnter"
+      @mousemove.left="onMouseMove"
+      @mouseup.left="onMouseEnd"
+    ></div>
   </div>
 </template>
 
 <script>
-import Epub from 'epubjs';
-global.ePub = Epub;
-import { addCss, flatten } from '../../utils/utils'
-import { ebookMixins } from '../../utils/mixins';
+import { ebookMixin } from '../../utils/mixin'
+import Epub from 'epubjs'
+import {
+  getFontFamily,
+  saveFontFamily,
+  getFontSize,
+  saveFontSize,
+  getTheme,
+  saveTheme,
+  getLocation
+} from '../../utils/localStorage'
+import { flatten } from '../../utils/book'
 
+global.ePub = Epub
 export default {
-  mixins: [ebookMixins],
+  mixins: [ebookMixin],
   methods: {
-    // 上一页
+    // 1 - 鼠标进入
+    // 2 - 鼠标进入后的移动
+    // 3 - 鼠标从移动状态松手
+    // 4 - 鼠标还原
+    onMouseEnd (e) {
+      if (this.mouseState === 2) {
+        this.setOffsetY(0)
+        this.firstOffsetY = null
+        this.mouseState = 3
+      } else {
+        this.mouseState = 4
+      }
+      const time = e.timeStamp - this.mouseStartTime
+      if (time < 100) {
+        this.mouseState = 4
+      }
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    onMouseMove (e) {
+      if (this.mouseState === 1) {
+        this.mouseState = 2
+      } else if (this.mouseState === 2) {
+        let offsetY = 0
+        if (this.firstOffsetY) {
+          offsetY = e.clientY - this.firstOffsetY
+          this.setOffsetY(offsetY)
+        } else {
+          this.firstOffsetY = e.clientY
+        }
+      }
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    onMouseEnter (e) {
+      this.mouseState = 1
+      this.mouseStartTime = e.timeStamp
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    move (e) {
+      let offsetY = 0
+      if (this.firstOffsetY) {
+        offsetY = e.changedTouches[0].clientY - this.firstOffsetY
+        this.setOffsetY(offsetY)
+      } else {
+        this.firstOffsetY = e.changedTouches[0].clientY
+      }
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    moveEnd (e) {
+      this.setOffsetY(0)
+      this.firstOffsetY = null
+    },
+    onMaskClick (e) {
+      if (this.mouseState && (this.mouseState === 2 || this.mouseState === 3)) {
+        return
+      }
+      const offsetX = e.offsetX
+      const width = window.innerWidth
+      if (offsetX > 0 && offsetX < width * 0.3) {
+        this.prevPage()
+      } else if (offsetX > 0 && offsetX > width * 0.7) {
+        this.nextPage()
+      } else {
+        this.toggleTitleAndMenu()
+      }
+    },
     prevPage () {
       if (this.rendition) {
         this.rendition.prev().then(() => {
-          this.refreshLocation();
+          this.refreshLocation()
         })
-        this.setMenuVisible(false)
+        this.hideTitleAndMenu()
       }
     },
-    // 下一页
     nextPage () {
       if (this.rendition) {
         this.rendition.next().then(() => {
-          this.refreshLocation();
+          this.refreshLocation()
         })
-        this.setMenuVisible(false)
+        this.hideTitleAndMenu()
       }
     },
-    // 初始化字号
-    init_fontSize () {
-      let fontSize = this.$storage.getFontSize(this.fileName)
+    toggleTitleAndMenu () {
+      if (this.menuVisible) {
+        this.setSettingVisible(-1)
+        this.setFontFamilyVisible(false)
+      }
+      this.setMenuVisible(!this.menuVisible)
+    },
+    initFontSize () {
+      let fontSize = getFontSize(this.fileName)
       if (!fontSize) {
-        this.$storage.saveFontSize(this.fileName, this.defaultFontSize);
+        saveFontSize(this.fileName, this.defaultFontSize)
       } else {
         this.rendition.themes.fontSize(fontSize)
         this.setDefaultFontSize(fontSize)
       }
     },
-    // 初始化字体
-    init_fontFamily () {
-      let font = this.$storage.getFontFamily(this.fileName)
+    initFontFamily () {
+      let font = getFontFamily(this.fileName)
       if (!font) {
-        this.$storage.saveFontFamily(this.fileName, this.defaultFontFamily);
+        saveFontFamily(this.fileName, this.defaultFontFamily)
       } else {
         this.rendition.themes.font(font)
         this.setDefaultFontFamily(font)
       }
     },
-    // 初始化电子书主题
-    init_epubTheme () {
-      let defaultTheme = this.$storage.getTheme(this.fileName)
+    initTheme () {
+      let defaultTheme = getTheme(this.fileName)
       if (!defaultTheme) {
-        defaultTheme = this.themeList[0].name;
-        this.$storage.saveTheme(this.fileName, defaultTheme)
+        defaultTheme = this.themeList[0].name
+        saveTheme(this.fileName, defaultTheme)
       }
       this.setDefaultTheme(defaultTheme)
       this.themeList.forEach(theme => {
-        this.rendition.themes.register(theme.name, theme.style);
-        this.rendition.themes.select(defaultTheme)
+        this.rendition.themes.register(theme.name, theme.style)
+      })
+      this.rendition.themes.select(defaultTheme)
+    },
+    initRendition () {
+      this.rendition = this.book.renderTo('read', {
+        width: innerWidth,
+        height: innerHeight,
+        method: 'default'
+      })
+      const location = getLocation(this.fileName)
+      this.display(location, () => {
+        this.initTheme()
+        this.initFontSize()
+        this.initFontFamily()
+        this.initGlobalStyle()
+      })
+      this.rendition.hooks.content.register(contents => {
+        Promise.all([
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+        ]).then(() => {
+        })
       })
     },
-    // 监听电子书翻页手势
-    init_Gesture () {
+    initGesture () {
       this.rendition.on('touchstart', event => {
-        this.touchStartX = event.changedTouches[0].clientX;
-        this.touchStartTime = event.timeStamp;
-      });
+        this.touchStartX = event.changedTouches[0].clientX
+        this.touchStartTime = event.timeStamp
+      })
       this.rendition.on('touchend', event => {
-        const offsetX = event.changedTouches[0].clientX - this.touchStartX;
-        const time = event.timeStamp - this.touchStartTime;
-        if (time > 300 && offsetX > 40) {
+        const offsetX = event.changedTouches[0].clientX - this.touchStartX
+        const time = event.timeStamp - this.touchStartTime
+        if (time < 500 && offsetX > 40) {
           this.prevPage()
-        } else if (time > 300 && offsetX < -40) {
+        } else if (time < 500 && offsetX < -40) {
           this.nextPage()
         } else {
           this.toggleTitleAndMenu()
         }
-        event.stopPropagation();
-        event.preventDefault();
-      });
+        event.preventDefault()
+        event.stopPropagation()
+      })
     },
     parseBook () {
       this.book.loaded.cover.then(cover => {
@@ -95,63 +206,81 @@ export default {
       })
       this.book.loaded.navigation.then(nav => {
         const navItem = flatten(nav.toc)
+
         function find (item, level = 0) {
           return !item.parent ? level : find(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
         }
+
+        navItem.forEach(item => {
+          item.level = find(item)
+        })
         this.setNavigation(navItem)
       })
     },
-    //初始化电子书渲染
-    init_rendition () {
-      this.rendition = this.book.renderTo('reader', {
-        width: innerWidth,
-        height: innerHeight,
-        method: 'default'
-      });
-      const location = this.$storage.getLocation(this.fileName)
-      this.display(location, () => {
-        this.init_fontSize();
-        this.init_fontFamily();
-        this.init_epubTheme();
-        this.init_GlobalStyle();
-        this.init_Gesture();
-        this.parseBook();
-      })
-      // 注入epub内嵌样式
-      this.rendition.hooks.content.register(contents => {
-        Promise.all([
-          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/cabin.css`),
-          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/daysOne.css`),
-          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/montserrat.css`),
-          contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/book/res/fonts/tangerine.css`),
-        ]).then(() => { })
-      })
-    },
-    // 初始化电子书
-    init_epub () {
-      let url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`;
-      this.book = new Epub(url);
-      this.setCurrentBook(this.book);
-      this.init_rendition();
+    initEpub () {
+      const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
+      this.book = new Epub(url)
+      this.setCurrentBook(this.book)
+      this.initRendition()
+      // this.initGesture()
+      this.parseBook()
       this.book.ready.then(() => {
-        return this.book.locations.generate(750 * (window.innerWidth / 375) * (this.$storage.getFontSize(this.fileName) / 16))
+        return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
       }).then(locations => {
-        this.book.rendition.display(locations)
+        this.navigation.forEach(nav => {
+          nav.pagelist = []
+        })
+        locations.forEach(item => {
+          const loc = item.match(/\[(.*)\]!/)[1]
+          this.navigation.forEach(nav => {
+            if (nav.href) {
+              let href = nav.href.match(/^(.*)\.[x]?html$/)[1]
+              if (href === loc) {
+                nav.pagelist.push(item)
+              }
+            }
+          })
+          let currentPage = 1
+          this.navigation.forEach((nav, index) => {
+            if (index === 0) {
+              nav.page = 1
+            } else {
+              nav.page = currentPage
+            }
+            currentPage += nav.pagelist.length + 1
+          })
+        })
+        this.setPagelist(locations)
         this.setBookAvailable(true)
         this.refreshLocation()
       })
-    },
-  },
-  mounted () {
-    if (this.$route.params.fileName) {
-      let fileName = this.$route.params.fileName.split('|').join('/');
-      this.setFileName(fileName).then(() => {
-        this.init_epub();
-      })
     }
   },
+  mounted () {
+    if (this.$route.params && this.$route.params.fileName) {
+      this.setFileName(this.$route.params.fileName.split('|').join('/')).then(() => {
+        this.initEpub()
+      })
+    }
+  }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
+@import "../../assets/styles/global";
+
+.ebook-reader {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  .ebook-reader-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: transparent;
+    z-index: 150;
+    width: 100%;
+    height: 100%;
+  }
+}
 </style>

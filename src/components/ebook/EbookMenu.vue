@@ -1,105 +1,80 @@
 <template>
   <div>
     <transition name="slide-up">
-      <div
-        class="menu-wrapper"
-        v-show="menuVisible"
-        :class="{'hide-box-shadow':!menuVisible || settingVisible>= 0}"
-      >
+      <div class="menu-wrapper" :class="{'hide-box-shadow': !menuVisible || settingVisible >= 0}" v-show="menuVisible">
         <div class="icon-wrapper">
-          <span
-            class="icon-menu"
-            @click="showSetting(3)"
-          ></span>
+          <span class="icon-menu" @click="showSetting(3)"></span>
         </div>
         <div class="icon-wrapper">
-          <span
-            class="icon-progress"
-            @click="showSetting(2)"
-          ></span>
+          <span class="icon-progress" @click="showSetting(2)"></span>
         </div>
         <div class="icon-wrapper">
-          <span
-            class="icon-bright"
-            @click="showSetting(1)"
-          ></span>
+          <span class="icon-bright" @click="showSetting(1)"></span>
         </div>
         <div class="icon-wrapper">
-          <span
-            class="icon-A"
-            @click="showSetting(0)"
-          ></span>
+          <span class="icon-A" @click="showSetting(0)"></span>
         </div>
       </div>
     </transition>
-    <!-- 主题设置 -->
-    <ebook-setting-themes></ebook-setting-themes>
-    <!-- 字体大小设置 -->
     <ebook-setting-font></ebook-setting-font>
-    <!-- 字体样式设置 -->
-    <ebook-font-family-popup></ebook-font-family-popup>
-    <!-- 进度设置 -->
-    <ebook-setting-progress></ebook-setting-progress>
-    <!-- 弹出菜单 -->
+    <ebook-setting-font-popup></ebook-setting-font-popup>
+    <ebook-setting-theme></ebook-setting-theme>
+    <ebook-setting-progess></ebook-setting-progess>
     <ebook-slide></ebook-slide>
   </div>
 </template>
 
 <script>
-import { ebookMixins } from '../../utils/mixins';
-import EbookSettingFont from "../../components/ebook/EbookSettingFont"
-import EbookFontFamilyPopup from "../../components/ebook/EbookFontFamilyPopup"
-import EbookSettingThemes from "../../components/ebook/EbookSettingThemes"
-import EbookSettingProgress from "../../components/ebook/EbookSettingProgress"
-import EbookSlide from "../../components/ebook/EbookSlide"
-export default {
-  mixins: [ebookMixins],
-  components: {
-    EbookSettingFont, 
-    EbookFontFamilyPopup,
-    EbookSettingThemes,
-    EbookSettingProgress,
-    EbookSlide
-  },
-  methods: {
-    showSetting (key) {
-      if (this.settingVisible === key) {
-        this.setSettingVisible(-1)
-      } else {
+  import EbookSettingFont from './EbookSettingFont'
+  import EbookSettingFontPopup from './EbookSettingFontPopup'
+  import EbookSettingTheme from './EbookSettingTheme'
+  import EbookSettingProgess from './EbookSettingProgress'
+  import EbookSlide from './EbookSlide'
+  import { ebookMixin } from '../../utils/mixin'
+
+  export default {
+    mixins: [ebookMixin],
+    components: {
+      EbookSettingFont,
+      EbookSettingFontPopup,
+      EbookSettingTheme,
+      EbookSettingProgess,
+      EbookSlide
+    },
+    methods: {
+      showSetting(key) {
         this.setSettingVisible(key)
       }
     }
-  },
-
-}
+  }
 </script>
 
-<style lang="scss" scoped>
-@import "../../assets/styles/mixin.scss";
+<style lang="scss" rel="stylesheet/scss" scoped>
+  @import "../../assets/styles/global";
 
-.menu-wrapper {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 102;
-  display: flex;
-  width: 100%;
-  height: px2rem(48);
-  background: white;
-  box-shadow: 0 px2rem(-8) px2rem(8) rgba(0, 0, 0, 0.15);
-  font-size: px2rem(22);
-  &.hide-box-shadow {
-    box-shadow: none;
-  }
-  .icon-wrapper {
-    flex: 1;
-    @include center;
-    .icon-progress {
-      font-size: px2rem(28);
+  .menu-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 200;
+    display: flex;
+    width: 100%;
+    height: px2rem(48);
+    background: white;
+    box-shadow: 0 px2rem(-8) px2rem(8) rgba(0, 0, 0, .15);
+    font-size: px2rem(20);
+    &.hide-box-shadow {
+      box-shadow: none;
     }
-    .icon-bright {
-      font-size: px2rem(24);
+    .icon-wrapper {
+      flex: 1;
+      @include center;
+      .icon-progress {
+        font-size: px2rem(24);
+      }
+      .icon-bright {
+        font-size: px2rem(22);
+      }
     }
   }
-}
 </style>
