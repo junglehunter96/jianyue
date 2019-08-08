@@ -93,11 +93,7 @@ const messages = {
     statistic: '$1 public reading • $2 private reading',
     startDownload: 'Start download...',
     progressDownload: 'Downloading：$1',
-    downloadFirst: 'Please download book first',
-    welcome: 'Welcome to visit iMooc<br>Learning "Practical WeChat Reading - Enterprise Web Book Store of Amami Native APP"<br>--------  Author: Sam  --------',
-    find: 'Go to book store',
-    changeLanguage: 'Change Language',
-    studyNow: 'Learn on imooc.com'
+    downloadFirst: 'Please download book first'
   },
   detail: {
     copyright: 'Copyright',
@@ -126,7 +122,7 @@ const messages = {
     pulldownAddMark: 'Pull down to add bookmark',
     releaseAddMark: 'Release to add bookmark',
     pulldownDeleteMark: 'Pull down to delete bookmark',
-    releaseDeleteMark: 'Release to add bookmark',
+    releaseDeleteMark: 'Release to delete bookmark',
     selectFont: 'Select Font',
     haveRead: 'Already read $1 minutes',
     themeDefault: 'Default',
@@ -139,7 +135,8 @@ const messages = {
     searchHint: 'Search from the entire book',
     haveRead2: 'already read',
     minutes: 'minutes',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    paginating: 'Paginating...'
   }
 }
 

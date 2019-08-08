@@ -93,11 +93,7 @@ const messages = {
     statistic: '$1本公开阅读 • $2本私密阅读',
     startDownload: '开始下载...',
     progressDownload: '正在下载：$1',
-    downloadFirst: '请先缓存图书',
-    welcome: '欢迎使用简阅读书',
-    find: '去找书',
-    changeLanguage: '切换语言',
-    studyNow: '马上学习'
+    downloadFirst: '请先缓存图书'
   },
   detail: {
     copyright: '版权',
@@ -139,7 +135,8 @@ const messages = {
     searchHint: '搜索全书内容',
     haveRead2: '已读',
     minutes: '分钟',
-    cancel: '取消'
+    cancel: '取消',
+    paginating: '分页中...'
   }
 }
 
