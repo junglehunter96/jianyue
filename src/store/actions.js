@@ -1,21 +1,21 @@
-const  bookActions = {
-  setFileName: ({ commit }, fileName) => {
-    return commit("SET_FILE_NAME", fileName);
-  },
-  setMenuVisible: ({ commit }, menuVisible) => {
-    return commit("SET_MENU_VISIBLE", menuVisible);
-  },
-  setSettingVisible: ({commit}, settingVisible) => {
-    return commit("SET_SETTING_VISIBLE",settingVisible);
-  },
-  setDefaultFontSize:({commit}, defaultFontSize) => {
-    return commit("SET_DEFAULT_FONT_SIZE",defaultFontSize)
-  },
+const actions = {
   setFontFamilyVisible: ({ commit }, visible) => {
     return commit('SET_FONT_FAMILY_VISIBLE', visible)
   },
   setDefaultFontFamily: ({ commit }, font) => {
     return commit('SET_DEFAULT_FONT_FAMILY', font)
+  },
+  setDefaultFontSize: ({ commit }, fontSize) => {
+    return commit('SET_DEFAULT_FONT_SIZE', fontSize)
+  },
+  setSettingVisible: ({ commit }, visible) => {
+    return commit('SET_SETTING_VISIBLE', visible)
+  },
+  setMenuVisible: ({ commit }, visible) => {
+    return commit('SET_MENU_VISIBLE', visible)
+  },
+  setFileName: ({ commit }, fileName) => {
+    return commit('SET_FILENAME', fileName)
   },
   setDefaultTheme: ({ commit }, theme) => {
     return commit('SET_DEFAULT_THEME', theme)
@@ -58,4 +58,4 @@ const  bookActions = {
   }
 }
 
-export default bookActions
+export default actions

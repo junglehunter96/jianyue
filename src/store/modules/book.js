@@ -1,10 +1,8 @@
-// book_module
-
 const book = {
   state: {
-    fileName: "", //文件地址名
+    fileName: '',
     menuVisible: false,
-    settingVisible: -1, // -1:不显示 0:字体 1:主题 2:进度 3:目录
+    settingVisible: -1,
     defaultFontSize: 16,
     defaultFontFamily: 'Default',
     fontFamilyVisible: false,
@@ -23,17 +21,17 @@ const book = {
     isBookmark: null
   },
   mutations: {
-    'SET_FILE_NAME': (state, fileName) => {
-      state.fileName = fileName;
+    'SET_FILENAME': (state, fileName) => {
+      state.fileName = fileName
     },
-    'SET_MENU_VISIBLE': (state, menuVisible) => {
-      state.menuVisible = menuVisible;
+    'SET_MENU_VISIBLE': (state, visible) => {
+      state.menuVisible = visible
     },
-    'SET_SETTING_VISIBLE': (state, settingVisible) => {
-      state.settingVisible = settingVisible;
+    'SET_SETTING_VISIBLE': (state, visible) => {
+      state.settingVisible = visible
     },
-    'SET_DEFAULT_FONT_SIZE': (state, defaultFontSize) => {
-      state.defaultFontSize = defaultFontSize;
+    'SET_DEFAULT_FONT_SIZE': (state, fontSize) => {
+      state.defaultFontSize = fontSize
     },
     'SET_DEFAULT_FONT_FAMILY': (state, font) => {
       state.defaultFontFamily = font
@@ -80,7 +78,7 @@ const book = {
     'SET_IS_BOOKMARK': (state, isBookmark) => {
       state.isBookmark = isBookmark
     }
-    
   }
-};
-export default book;
+}
+
+export default book
